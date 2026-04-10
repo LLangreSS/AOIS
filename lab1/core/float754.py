@@ -122,6 +122,17 @@ def add(arr_a: BitArray, arr_b: BitArray) -> BitArray:
     return _pack(sign_res, exp_res, res_mantis_23)
 
 
+def subtract(arr_a: BitArray, arr_b: BitArray) -> BitArray:
+    if _is_zero(arr_b):
+        return arr_a
+
+    neg_b = list(arr_b)
+
+    neg_b[0] = 1 - neg_b[0]
+
+    return add(arr_a, neg_b)
+
+
 def multiply(arr_a: BitArray, arr_b: BitArray) -> BitArray:
     if _is_zero(arr_a) or _is_zero(arr_b):
         return zeros(WORD_SIZE)

@@ -96,22 +96,41 @@ def main():
     num_vars = len(variables)
 
     print("\n[1] РАСЧЕТНЫЙ МЕТОД")
-    primes = get_prime_implicants(sdnf_num, num_vars)
 
-    sokr_dnf = implicants_to_formula(primes, variables)
+    print("\n--- Склеивание для ДНФ ---")
+    primes_dnf = get_prime_implicants(sdnf_num, num_vars)
+    sokr_dnf = implicants_to_formula(primes_dnf, variables, is_cnf=False)
+
+    print("\n--- Склеивание для КНФ ---")
+    primes_cnf = get_prime_implicants(sknf_num, num_vars)
+    sokr_cnf = implicants_to_formula(primes_cnf, variables, is_cnf=True)
+
     print(f"\nРезультат расчетного метода (Сокращенная ДНФ):\n{sokr_dnf}")
+    print(f"Результат расчетного метода (Сокращенная КНФ):\n{sokr_cnf}")
 
-    print("\n[2] РАСЧЕТНО-ТАБЛИЧНЫЙ МЕТОД")
-    print_implicant_table(primes, sdnf_num, num_vars)
+    print("\n" + "-" * 40)
+    print("[2] РАСЧЕТНО-ТАБЛИЧНЫЙ МЕТОД")
 
-    min_cover = get_minimal_cover(primes, sdnf_num, num_vars)
-    mdnf_formula = implicants_to_formula(min_cover, variables)
+    print("\n--- Импликантная таблица ДНФ ---")
+    print_implicant_table(primes_dnf, sdnf_num, num_vars)
+    min_cover_dnf = get_minimal_cover(primes_dnf, sdnf_num, num_vars)
+    mdnf_formula = implicants_to_formula(min_cover_dnf, variables, is_cnf=False)
+
+    print("\n--- Импликантная таблица КНФ ---")
+    print_implicant_table(primes_cnf, sknf_num, num_vars)
+    min_cover_cnf = get_minimal_cover(primes_cnf, sknf_num, num_vars)
+    mknf_formula = implicants_to_formula(min_cover_cnf, variables, is_cnf=True)
+
     print(f"\nРезультат расчетно-табличного метода (МДНФ):\n{mdnf_formula}")
+    print(f"Результат расчетно-табличного метода (МКНФ):\n{mknf_formula}")
 
-    print("\n[3] ТАБЛИЧНЫЙ МЕТОД (КАРТА КАРНО)")
+    print("\n" + "-" * 40)
+    print("[3] ТАБЛИЧНЫЙ МЕТОД (КАРТА КАРНО)")
+
     print_karnaugh_map(variables, truth_table)
 
     print(f"\nРезультат минимизации по Карте Карно (МДНФ):\n{mdnf_formula}")
+    print(f"Результат минимизации по Карте Карно (МКНФ):\n{mknf_formula}")
 
     print("\n" + "=" * 40)
 

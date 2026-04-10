@@ -81,31 +81,40 @@ def print_implicant_table(primes: list[str], sdnf_indices: list[int], num_vars: 
         print(row_str + " | ".join(marks))
 
 
-def implicants_to_formula(implicants: list[str], variables: list[str]) -> str:
+def implicants_to_formula(implicants: list[str], variables: list[str], is_cnf: bool = False) -> str:
     """
     Универсальный переводчик: список бинарных строк ['1-0', '0--']
-    превращает в алгебраическую формулу: (a & !c) | !a
+    превращает в алгебраическую формулу: (a & !c) | !a для ДНФ
+    или (!a | c) & a для КНФ.
     """
     if not implicants:
-        return "0"
+        return "1" if is_cnf else "0"
     if implicants == ['-' * len(variables)]:
-        return "1"
+        return "0" if is_cnf else "1"
 
     terms = []
     for p in implicants:
         parts = []
         for i, char in enumerate(p):
-            if char == '1':
-                parts.append(variables[i])
-            elif char == '0':
-                parts.append(f"!{variables[i]}")
+            if is_cnf:
+                if char == '1':
+                    parts.append(f"!{variables[i]}")
+                elif char == '0':
+                    parts.append(variables[i])
+            else:
+                if char == '1':
+                    parts.append(variables[i])
+                elif char == '0':
+                    parts.append(f"!{variables[i]}")
 
         if len(parts) > 1:
-            terms.append("(" + " & ".join(parts) + ")")
+            joiner = " | " if is_cnf else " & "
+            terms.append("(" + joiner.join(parts) + ")")
         elif len(parts) == 1:
             terms.append(parts[0])
 
-    return " | ".join(terms)
+    outer_joiner = " & " if is_cnf else " | "
+    return outer_joiner.join(terms)
 
 
 def _build_coverage_map(primes: list[str], sdnf_indices: list[int], num_vars: int) -> dict[str, set[int]]:
@@ -170,4 +179,3 @@ def get_minimal_cover(primes: list[str], sdnf_indices: list[int], num_vars: int)
         minimal_cover.extend(_greedy_cover(coverage, uncovered, remaining_primes))
 
     return minimal_cover
-

@@ -5,7 +5,7 @@ from core.integer_math import (
 )
 from core.float754 import (
     parse_to_array, array_to_float_str,
-    add as float_add, multiply as float_mul, divide as float_div
+    add as float_add, multiply as float_mul, divide as float_div, subtract as diff
 )
 from core.gray_bcd import to_gray_bcd, add as bcd_add
 
@@ -79,6 +79,10 @@ def handle_float754():
 
     add_res = float_add(arr_a, arr_b)
     print(f"A + B = {array_to_float_str(add_res)}")
+    print(f"Битовый вид: {format_float754(add_res)}")
+
+    add_res = diff(arr_a, arr_b)
+    print(f"A - B = {array_to_float_str(add_res)}")
     print(f"Битовый вид: {format_float754(add_res)}")
 
     mul_res = float_mul(arr_a, arr_b)
